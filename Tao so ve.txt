@@ -1,0 +1,41 @@
+Tim so tkno cuoi
+Public Function GetLastLccTktNbr(ByVal strCar As String, ByVal strRloc As String _
+                                     , intCountTtlPax As Integer) As String
+        Dim strQuerry As String
+        If intCountTtlPax > 99 And strRloc.Length > 7 Then
+            strRloc = Mid(strRloc, strRloc.Length - 6)
+        End If
+        strQuerry = "select top 1 Tkno from Ras12.dbo.tkt where Status <> 'XX' and SRV ='S' and substring(TKNO,1,13)='" _
+            & "Z" & strCar & " " & Mid(strRloc.PadRight(8, "0"), 1, 6) & " " & Mid(strRloc.PadRight(8, "0"), 7) _
+            & "'  order by RecId desc"
+        ' can bo sung them lay luon tu tkt_1a de so sanh, lay so cuoi cung
+        Return GetScalarAsString(strQuerry)
+    End Function
+
+- Neu tim thay tao tiep theo
+- Neu khong tao tkno khac
+
+Tao so tkno
+Public Function CreateLccTkno(strCar As String, strRloc As String, intSeqNbr As Integer _
+                                  , intCountTtlPax As Integer) As String
+        Dim strTkno As String
+
+        If intCountTtlPax > 99 And strRloc.Length > 7 Then
+            strRloc = Mid(strRloc, strRloc.Length - 6)
+        End If
+        strTkno = "Z" & strCar & strRloc
+        If strTkno.Length < 13 Then
+            Dim strZeros As New String("0", 13 - (strTkno.Length + intSeqNbr.ToString.Length))
+            strTkno = strTkno & strZeros & intSeqNbr
+        ElseIf strTkno.Length > 13 Then
+            MsgBox("")
+
+        End If
+
+        Return Mid(strTkno, 1, 3) & " " & Mid(strTkno, 4, 6) & " " & Mid(strTkno, 10)
+    End Function
+
+'strCar: hang bay(vi du: VJ)
+'strRloc: so PNR(vi du: Mã đặt chỗ (số vé):YYTRHU)
+'intSeqNbr: so chang bay
+'intCountTtlPax: so khach
